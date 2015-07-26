@@ -50,5 +50,11 @@ package fxp.monads {
         public function isFalse():Boolean {
             return !this.isTrue();
         }
+
+        public static const utils:Object = {
+            maybe: F.curry(function(x:*, f:Function, m:Maybe):* {
+                return m.maybe(x, f);
+            })
+        }
     }
 }

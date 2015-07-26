@@ -1,7 +1,7 @@
 package fxp.utils {
 
     import fxp.core.F;
-    import fxp.monads.*;
+    import fxp.monads.Maybe;
 
     public function objectUtils():Object {
         var object:Object = {

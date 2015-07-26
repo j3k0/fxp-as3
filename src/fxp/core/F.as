@@ -5,12 +5,40 @@ package fxp.core {
 
     public class F {
 
+        // Initialize the fxp library
+        //
+        // note: I tried using "F.once" for this, however once isn't initialized
+        // before fxpInit, and I wouldn't assume it will.
+        private static var initialized:Boolean = false;
         public static function fxpInit():void {
+            if (initialized) return;
+            initialized = true;
             F.utils = coreUtils();
             F.object = objectUtils();
             F.array = arrayUtils();
             F.string = stringUtils();
             F.debug = debugUtils();
+        }
+
+        // Identify function
+        public static function id(x:*):* { return x; }
+
+        // Dynamic number of arguments function will lose the arity information
+        // This "ugly" trick will allow to create functions for which AS3 will
+        // have a know arity (works for 0 <= arity <= 9).
+        public static function functionWithArity(f:Function, arity:int):Function {
+            switch(arity) {
+                case 1: return function a1(a:*):* { return f.apply(this, arguments); };
+                case 2: return function a2(a:*,b:*):* { return f.apply(this, arguments); };
+                case 3: return function a3(a:*,b:*,c:*):* { return f.apply(this, arguments); };
+                case 4: return function a4(a:*,b:*,c:*,d:*):* { return f.apply(this, arguments); };
+                case 5: return function a5(a:*,b:*,c:*,d:*,e:*):* { return f.apply(this, arguments); };
+                case 6: return function a6(a:*,b:*,c:*,d:*,e:*,f:*):* { return f.apply(this, arguments); };
+                case 7: return function a7(a:*,b:*,c:*,d:*,e:*,f:*,g:*):* { return f.apply(this, arguments); };
+                case 8: return function a8(a:*,b:*,c:*,d:*,e:*,f:*,g:*,h:*):* { return f.apply(this, arguments); };
+                case 9: return function a9(a:*,b:*,c:*,d:*,e:*,f:*,g:*,h:*,i:*):* { return f.apply(this, arguments); };
+            }
+            return function a0(...args):* { return f.apply(this, args); };
         }
 
         // Return a partially applied function
@@ -61,24 +89,6 @@ package fxp.core {
             return functionWithArity(ret, func[func.length - 1].length);
         }
 
-        // Dynamic number of arguments function will lose the arity information
-        // This "ugly" trick will allow to create functions for which AS3 will
-        // have a know arity (works for 0 <= arity <= 9).
-        public static const functionWithArity:Function = function(f:Function, arity:int):Function {
-            switch(arity) {
-                case 1: return function a1(a:*):* { return f.apply(this, arguments); };
-                case 2: return function a2(a:*,b:*):* { return f.apply(this, arguments); };
-                case 3: return function a3(a:*,b:*,c:*):* { return f.apply(this, arguments); };
-                case 4: return function a4(a:*,b:*,c:*,d:*):* { return f.apply(this, arguments); };
-                case 5: return function a5(a:*,b:*,c:*,d:*,e:*):* { return f.apply(this, arguments); };
-                case 6: return function a6(a:*,b:*,c:*,d:*,e:*,f:*):* { return f.apply(this, arguments); };
-                case 7: return function a7(a:*,b:*,c:*,d:*,e:*,f:*,g:*):* { return f.apply(this, arguments); };
-                case 8: return function a8(a:*,b:*,c:*,d:*,e:*,f:*,g:*,h:*):* { return f.apply(this, arguments); };
-                case 9: return function a9(a:*,b:*,c:*,d:*,e:*,f:*,g:*,h:*,i:*):* { return f.apply(this, arguments); };
-            }
-            return function a0(...args):* { return f.apply(this, args); };
-        }
-
         public static const map:Function = function(f:Function, m:* = undefined):* {
             if (m == undefined) {
                 return function(m:*):* {
@@ -87,6 +97,18 @@ package fxp.core {
             }
             else {
                 return m.map(f);
+            }
+        }
+
+        public static const join:Function = function(m:*):* { return m.join(); }
+        public static const chain:Function = function(f:Function, m:* = undefined):* {
+            if (m == undefined) {
+                return function(m:*):* {
+                    return m.chain(f);
+                }
+            }
+            else {
+                return m.chain(f);
             }
         }
 
@@ -110,25 +132,17 @@ package fxp.core {
         public static const call:Function = call1;
         public static const rcall:Function = flip(call);
 
-        public static const join:Function = function(m:*):* { return m.join(); }
-        public static const chain:Function = function(f:Function, m:* = undefined):* {
-            if (m == undefined) {
-                return function(m:*):* {
-                    return m.chain(f);
+        public static function once(f:Function):Function {
+            var called:Boolean = false;
+            var ret:*;
+            return functionWithArity(function(...dynamicArgs):* {
+                if (!called) {
+                    ret = f.apply(this, dynamicArgs);
+                    called = true;
                 }
-            }
-            else {
-                return m.chain(f);
-            }
+                return ret;
+            }, f.length);
         }
-
-        public static const maybe:Function = function(x:*, f:Function):* {
-            return function(m:Maybe):* {
-                return m.maybe(x, f);
-            }
-        }
-
-        public static function id(x:*):* { return x; }
 
         // Core utils
         public static var utils:Object = null;
