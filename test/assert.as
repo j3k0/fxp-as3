@@ -1,13 +1,13 @@
 package {
-    public var assert:Function = function(what:String, test:Boolean):void {
-        if (test) {
-            trace("OK:", what);
+    public var assert:Function = function(what:String, result:Boolean):void {
+        if (result) {
+            trace(test, what, " OK");
             ++success;
         }
         else {
-            trace("FAILED:", what);
+            trace(test, what, " FAILED");
             ++failures;
-            errors.push(new Error("Test failed: " + what));
+            errors.push(new Error("Test failed: " + test + " " + what));
         }
     }
 
@@ -16,9 +16,15 @@ package {
         if (errors.length > 0)
             throw errors[0];
     }
+
+    assert.test = function(testName:String):void {
+        test = testName;
+        trace("\n**", testName);
+    }
 }
 
 var errors:Array = [];
+var test:String = "";
 
 var success:int = 0;
 var failures:int = 0;

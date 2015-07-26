@@ -30,7 +30,7 @@ package fxp.monads {
         }
 
         public function join():* {
-            return value;
+            return isNothing() ? this : value;
         }
 
         public function maybe(x:*, f:Function):* {
