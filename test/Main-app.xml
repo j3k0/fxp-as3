@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/16.0">
+	<id>Main</id>
+	<filename>Main</filename>
+	<name>Main</name>
+	<versionNumber>1</versionNumber>
+	<initialWindow>
+		<content>Main.swf</content>
+	</initialWindow>
+</application>
