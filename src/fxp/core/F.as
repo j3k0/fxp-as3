@@ -5,18 +5,11 @@ package fxp.core {
     public class F {
 
         public static function fxpInit():void {
+            F.utils = coreUtils();
             F.object = objectUtils();
             F.array = arrayUtils();
             F.string = stringUtils();
-        }
-
-        // debug :: String -> (a -> a)
-        // Return a function that'll log and return whatever data
-        public static function debug(name:String):Function {
-            return function(o:*):* {
-                trace("F.debug [" + name + "] " + o);
-                return o;
-            }
+            F.debug = debugUtils();
         }
 
         // Return a partially applied function
@@ -102,8 +95,19 @@ package fxp.core {
             });
         }
 
-        public static const call:Function = function(f:Function, data:*):* { return f(data); }
-        public static const rcall:Function = F.flip(F.call);
+        public static const call0:Function = function(f:Function):* { return f(); }
+        public static const call1:Function = curry(function(f:Function, a1:*):* { return f(a1); });
+        public static const call2:Function = curry(function(f:Function, a1:*, a2:*):* { return f(a1, a2); });
+        public static const call3:Function = curry(function(f:Function, a1:*, a2:*, a3:*):* { return f(a1, a2, a3); });
+        public static const call4:Function = curry(function(f:Function, a1:*, a2:*, a3:*, a4:*):* { return f(a1, a2, a3, a4); });
+        public static const call5:Function = curry(function(f:Function, a1:*, a2:*, a3:*, a4:*, a5:*):* { return f(a1, a2, a3, a4, a5); });
+        public static const call6:Function = curry(function(f:Function, a1:*, a2:*, a3:*, a4:*, a5:*, a6:*):* { return f(a1, a2, a3, a4, a5, a6); });
+        public static const call7:Function = curry(function(f:Function, a1:*, a2:*, a3:*, a4:*, a5:*, a6:*, a7:*):* { return f(a1, a2, a3, a4, a5, a6, a7); });
+        public static const call8:Function = curry(function(f:Function, a1:*, a2:*, a3:*, a4:*, a5:*, a6:*, a7:*, a8:*):* { return f(a1, a2, a3, a4, a5, a6, a7, a8); });
+        public static const call9:Function = curry(function(f:Function, a1:*, a2:*, a3:*, a4:*, a5:*, a6:*, a7:*, a8:*, a9:*):* { return f(a1, a2, a3, a4, a5, a6, a7, a8, a9); });
+
+        public static const call:Function = call1;
+        public static const rcall:Function = flip(call);
 
         public static const join:Function = function(m:*):* { return m.join(); }
         public static const chain:Function = function(f:Function, m:* = undefined):* {
@@ -123,6 +127,14 @@ package fxp.core {
             }
         }
 
+        public static function id(x:*):* { return x; }
+
+        // Core utils
+        public static var utils:Object = null;
+
+        // Debug utils
+        public static var debug:Object = null;
+
         // Utility functions that applies to Objects
         public static var object:Object = null;
 
@@ -137,87 +149,128 @@ package fxp.core {
 import fxp.core.F;
 import fxp.monads.*;
 
+function debugUtils():Object {
+
+    var debug:Object = {
+
+        dtrace: trace,
+
+        // debug :: String -> (a -> a)
+        //
+        // Return a function that'll trace and return the data
+        trace: function(name:String):Function {
+            return function(o:*):* {
+                debug.dtrace("F.debug.trace [" + name + "] " + debug.stringify(o));
+                return o;
+            }
+        },
+
+        // stringify :: a -> String
+        stringify: function(o:*):String {
+            return F.object.prop("stringify", o).maybe(JSON.stringify(o), F.call0);
+        }
+    }
+    return debug;
+}
+
+function coreUtils():Object {
+    var core:Object = {
+
+        // equals :: a -> a -> Boolean
+        equals: F.curry(function(a:*, b:*):Boolean {
+            return a === b;
+        })
+    }
+    return core;
+}
+
+function isNativeType(data:*):Boolean {
+    return typeof data == "number" ||
+        typeof data == "string" ||
+        typeof data == "boolean";
+}
+
 function objectUtils():Object {
     var object:Object = {
 
-        // haz :: String -> Object -> Maybe[Object]
-        haz: F.curry(function(field:String, data:Object):Maybe {
-            return (data && data[field] !== undefined)
-                ? Maybe.of(data)
-                : Maybe.of(undefined);
+        // haz :: String -> Object -> Boolean
+        haz: F.curry(function(field:String, data:Object):Boolean {
+            return (!isNativeType(data) && data && data[field] !== undefined);
         }),
 
-        // deepHaz :: Array[a] -> Object -> Maybe[Object]
+        // deepHaz :: Array[a] -> Object -> Boolean
         //
         // Examples:
-        // deepHaz("a.b.c", { a: { b: { c: "yes" } } }) -> yes
-        // deepHaz("a.b.c", { a: { b: { c: false } } }) -> yes
-        // deepHaz("a.b.c", { a: { b: {} } }) -> no
-        deepHaz: F.curry(function(def:String, data:Object):Maybe {
+        // deepHaz("a.b.c", { a: { b: { c: "yes" } } }) -> true
+        // deepHaz("a.b.c", { a: { b: { c: false } } }) -> true
+        // deepHaz("a.b.c", { a: { b: {} } }) -> false
+        deepHaz: F.curry(function(def:String, data:Object):Boolean {
 
-            const headHaz:Function = F.curry(function(data:Object, arr:Array):Maybe {
-                return F.array.headMap(F.object.haz, arr).chain(F.rcall(data));
+            const headHaz:Function = F.curry(function(data:Object, arr:Array):Boolean {
+                return F.array.headMap(F.object.haz, arr).map(F.rcall(data)).isTrue();
             });
             const joinTail:Function = F.combine(F.join, F.map(F.array.join(".")), F.array.tail);
 
             const tokens:Maybe = F.string.split(".", def);
-            const child:Object = tokens.chain(F.array.head).chain(F.flip(F.object.prop)(data)).join();
-            return (
-                tokens.no() || (
-                    tokens.chain(headHaz(data)).yes()
-                    && tokens.map(joinTail).chain(F.flip(F.object.deepHaz)(child)).yes()
-                )
-            )
-            ? Maybe.of(data)
-            : Maybe.of(undefined)
+            const child:Object = tokens.chain(F.array.head).chain(F.flip(F.object.prop)(data)).maybe(null, F.id);
+            return tokens.no() || (
+                tokens.map(headHaz(data)).isTrue()
+                && tokens.map(joinTail).map(F.flip(F.object.deepHaz)(child)).isTrue()
+            );
         }),
 
         // prop :: String -> Object -> Maybe[*]
-        prop: F.curry(function(field:String, data:Object):Maybe {
-            return object.haz(field, data).map(function(data:Object):* {
-                return data[field];
-            });
+        prop: F.curry(function(field:String, data:*):Maybe {
+            return object.haz(field, data)
+                ? Maybe.of(data[field])
+                : Maybe.of();
         })
     }
     return object;
 }
 
-function arrayUtils():Object { return {
+function arrayUtils():Object {
+    var array:Object = {
+        
+        // join :: String -> Array -> String
+        join: F.curry(function(sep:String, arr:Array):String {
+            return arr.join(sep);
+        }),
 
-    // join :: String -> Array -> String
-    join: F.curry(function(sep:String, arr:Array):String {
-        return arr.join(sep);
-    }),
+        // head :: Array[a] -> Maybe[a]
+        head: function(arr:Array):Maybe {
+            return arr && arr.length > 0
+                ? Maybe.of(arr[0])
+                : Maybe.of(undefined);
+        },
 
-    // head :: Array[a] -> Maybe[a]
-    head: function(arr:Array):Maybe {
-        return arr && arr.length > 0
-            ? Maybe.of(arr[0])
-            : Maybe.of(undefined);
-    },
+        // head :: Array[a] -> Maybe[Array[a]]
+        tail: function(arr:Array):Maybe {
+            return arr && arr.length > 0
+                ? Maybe.of(arr.slice(1))
+                : Maybe.of(undefined);
+        },
 
-    // head :: Array[a] -> Maybe[Array[a]]
-    tail: function(arr:Array):Maybe {
-        return arr && arr.length > 0
-            ? Maybe.of(arr.slice(1))
-            : Maybe.of(undefined);
-    },
+        // headMap :: (a -> *) -> Array[a] -> Maybe[*]
+        headMap: F.curry(function(f:Function, arr:Array):Maybe {
+            return F.array.head(arr).map(f);
+        })
+    }
+    return array;
+}
 
-    // headMap :: (a -> *) -> Array[a] -> Maybe[*]
-    headMap: F.curry(function(f:Function, arr:Array):Maybe {
-        return F.array.head(arr).map(f);
-    })
-}}
+function stringUtils():Object {
+    var string:Object = {
 
-function stringUtils():Object { return {
-
-    // split :: String -> String -> Array
-    split: F.curry(function(separator:String, str:String):Maybe {
-        if (!str) return Maybe.of(undefined);
-        const tokens:Array = str.split(separator);
-        if (tokens.length === 0) return Maybe.of(undefined);
-        return Maybe.of(tokens);
-    })
-}}
+        // split :: String -> String -> Array
+        split: F.curry(function(separator:String, str:String):Maybe {
+            if (!str) return Maybe.of(undefined);
+            const tokens:Array = str.split(separator);
+            if (tokens.length === 0) return Maybe.of(undefined);
+            return Maybe.of(tokens);
+        })
+    }
+    return string;
+}
 
 // vim: ts=4:sw=4:et:

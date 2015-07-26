@@ -1,12 +1,19 @@
 package fxp.monads {
 
+    import fxp.core.F;
+
     // Maybe Funktor
     public class Maybe {
 
         private var value:*;
+        public static const NOTHING:* = undefined;
 
-        public function Maybe(v:*) { value = v; }
-        public static function of(v:*):Maybe { return new Maybe(v); }
+        public function Maybe(v:* = undefined) {
+            value = v;
+        }
+        public static function of(v:* = undefined):Maybe {
+            return new Maybe(v);
+        }
 
         public function isNothing():Boolean {
             return value === undefined;
@@ -15,7 +22,7 @@ package fxp.monads {
         public function yes():Boolean { return !isNothing(); }
 
         public function map(f:Function):* {
-            return isNothing() ? Maybe.of(undefined) : Maybe.of(f(value));
+            return isNothing() ? this : Maybe.of(f(value));
         }
 
         public function chain(f:Function):Maybe {
@@ -30,8 +37,18 @@ package fxp.monads {
             return isNothing() ? x : f(value);
         }
 
-        public function toString():String {
-            return "Maybe(" + JSON.stringify(value) + ")";
+        public function stringify():String {
+            return isNothing()
+                ? "Maybe()"
+                : "Maybe(" + F.debug.stringify(value) + ")";
+        }
+
+        public function isTrue():Boolean {
+            return maybe(false, F.id) ? true : false;
+        }
+
+        public function isFalse():Boolean {
+            return !this.isTrue();
         }
     }
 }
