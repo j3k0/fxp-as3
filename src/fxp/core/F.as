@@ -1,6 +1,7 @@
 package fxp.core {
 
     import fxp.monads.*;
+    import fxp.utils.*;
 
     public class F {
 
@@ -144,133 +145,6 @@ package fxp.core {
         // Utility functions that applies to Strings
         public static var string:Object = null;
     }
-}
-
-import fxp.core.F;
-import fxp.monads.*;
-
-function debugUtils():Object {
-
-    var debug:Object = {
-
-        dtrace: trace,
-
-        // debug :: String -> (a -> a)
-        //
-        // Return a function that'll trace and return the data
-        trace: function(name:String):Function {
-            return function(o:*):* {
-                debug.dtrace("F.debug.trace [" + name + "] " + debug.stringify(o));
-                return o;
-            }
-        },
-
-        // stringify :: a -> String
-        stringify: function(o:*):String {
-            return F.object.prop("stringify", o).maybe(JSON.stringify(o), F.call0);
-        }
-    }
-    return debug;
-}
-
-function coreUtils():Object {
-    var core:Object = {
-
-        // equals :: a -> a -> Boolean
-        equals: F.curry(function(a:*, b:*):Boolean {
-            return a === b;
-        })
-    }
-    return core;
-}
-
-function isNativeType(data:*):Boolean {
-    return typeof data == "number" ||
-        typeof data == "string" ||
-        typeof data == "boolean";
-}
-
-function objectUtils():Object {
-    var object:Object = {
-
-        // haz :: String -> Object -> Boolean
-        haz: F.curry(function(field:String, data:Object):Boolean {
-            return (!isNativeType(data) && data && data[field] !== undefined);
-        }),
-
-        // deepHaz :: Array[a] -> Object -> Boolean
-        //
-        // Examples:
-        // deepHaz("a.b.c", { a: { b: { c: "yes" } } }) -> true
-        // deepHaz("a.b.c", { a: { b: { c: false } } }) -> true
-        // deepHaz("a.b.c", { a: { b: {} } }) -> false
-        deepHaz: F.curry(function(def:String, data:Object):Boolean {
-
-            const headHaz:Function = F.curry(function(data:Object, arr:Array):Boolean {
-                return F.array.headMap(F.object.haz, arr).map(F.rcall(data)).isTrue();
-            });
-            const joinTail:Function = F.combine(F.join, F.map(F.array.join(".")), F.array.tail);
-
-            const tokens:Maybe = F.string.split(".", def);
-            const child:Object = tokens.chain(F.array.head).chain(F.flip(F.object.prop)(data)).maybe(null, F.id);
-            return tokens.no() || (
-                tokens.map(headHaz(data)).isTrue()
-                && tokens.map(joinTail).map(F.flip(F.object.deepHaz)(child)).isTrue()
-            );
-        }),
-
-        // prop :: String -> Object -> Maybe[*]
-        prop: F.curry(function(field:String, data:*):Maybe {
-            return object.haz(field, data)
-                ? Maybe.of(data[field])
-                : Maybe.of();
-        })
-    }
-    return object;
-}
-
-function arrayUtils():Object {
-    var array:Object = {
-        
-        // join :: String -> Array -> String
-        join: F.curry(function(sep:String, arr:Array):String {
-            return arr.join(sep);
-        }),
-
-        // head :: Array[a] -> Maybe[a]
-        head: function(arr:Array):Maybe {
-            return arr && arr.length > 0
-                ? Maybe.of(arr[0])
-                : Maybe.of(undefined);
-        },
-
-        // head :: Array[a] -> Maybe[Array[a]]
-        tail: function(arr:Array):Maybe {
-            return arr && arr.length > 0
-                ? Maybe.of(arr.slice(1))
-                : Maybe.of(undefined);
-        },
-
-        // headMap :: (a -> *) -> Array[a] -> Maybe[*]
-        headMap: F.curry(function(f:Function, arr:Array):Maybe {
-            return F.array.head(arr).map(f);
-        })
-    }
-    return array;
-}
-
-function stringUtils():Object {
-    var string:Object = {
-
-        // split :: String -> String -> Array
-        split: F.curry(function(separator:String, str:String):Maybe {
-            if (!str) return Maybe.of(undefined);
-            const tokens:Array = str.split(separator);
-            if (tokens.length === 0) return Maybe.of(undefined);
-            return Maybe.of(tokens);
-        })
-    }
-    return string;
 }
 
 // vim: ts=4:sw=4:et:
