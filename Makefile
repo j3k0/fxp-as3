@@ -1,5 +1,5 @@
 SOURCE_FILES=src/fxp/core/F.as src/fxp/monads/Maybe.as
-TEST_FILES=test/Main.as test/assert.as test/TestMaybe.as
+TEST_FILES=test/Main.as test/assert.as test/TestMaybe.as test/TestF.as test/TestFObject.as test/TestFArray.as test/TestFDebug.as
 
 test: bin/test.swf
 	adl test/Main-app.xml bin

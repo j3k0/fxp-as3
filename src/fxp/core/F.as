@@ -13,11 +13,11 @@ package fxp.core {
         public static function fxpInit():void {
             if (initialized) return;
             initialized = true;
-            F.utils = coreUtils();
+            F.debug = debugUtils();
             F.object = objectUtils();
+            F.utils = coreUtils();
             F.array = arrayUtils();
             F.string = stringUtils();
-            F.debug = debugUtils();
         }
 
         // Identify function
@@ -78,6 +78,14 @@ package fxp.core {
 
         // Combine multiple function together
         public static const combine:Function = function(...func):Function {
+            if (func.length === 1 && typeof func[0] !== 'function')
+                return combineArray(func[0]);
+            else
+                return combineArray(func);
+        }
+
+        // Combine multiple function together
+        public static const combineArray:Function = function(func:*):Function {
             var ret:Function = function(...dynamicArgs):* {
                 var data:* = func[func.length - 1].apply(null, dynamicArgs);
                 for (var i:int = func.length - 2; i >= 0; --i) {
@@ -89,28 +97,14 @@ package fxp.core {
             return functionWithArity(ret, func[func.length - 1].length);
         }
 
-        public static const map:Function = function(f:Function, m:* = undefined):* {
-            if (m == undefined) {
-                return function(m:*):* {
-                    return m.map(f);
-                }
-            }
-            else {
-                return m.map(f);
-            }
-        }
+        public static const map:Function = curry(function(f:Function, m:*):* {
+            return m.map(f);
+        });
 
         public static const join:Function = function(m:*):* { return m.join(); }
-        public static const chain:Function = function(f:Function, m:* = undefined):* {
-            if (m == undefined) {
-                return function(m:*):* {
-                    return m.chain(f);
-                }
-            }
-            else {
-                return m.chain(f);
-            }
-        }
+        public static const chain:Function = curry(function(f:Function, m:*):* {
+            return m.chain(f);
+        });
 
         public static const flip:Function = function(f:Function):Function {
             return curry(function(a:*, b:*):* {

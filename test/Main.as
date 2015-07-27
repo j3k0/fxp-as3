@@ -13,6 +13,7 @@ package
 
             try {
                 TestFDebug.run();
+                TestF.run();
                 TestMaybe.run();
                 TestFObject.run();
                 TestFArray.run();
