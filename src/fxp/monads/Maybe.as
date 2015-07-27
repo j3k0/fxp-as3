@@ -54,7 +54,9 @@ package fxp.monads {
         public static const utils:Object = {
             maybe: F.curry(function(x:*, f:Function, m:Maybe):* {
                 return m.maybe(x, f);
-            })
+            }),
+            isTrue: function(m:*):Boolean { return m.isTrue(); },
+            isFalse: function(m:*):Boolean { return m.isFalse(); }
         }
     }
 }

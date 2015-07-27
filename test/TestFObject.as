@@ -6,6 +6,22 @@ package {
 
         public static function run():void {
 
+            assert.test("F.object.prop");
+            assert("a:true", F.object.prop("a", { a :true }).yes());
+            assert("a:false", F.object.prop("a", { a: false }).yes());
+            assert("a:null", F.object.prop("a", { a: null }).yes());
+            assert("{}", F.object.prop("a", {}).no());
+
+            assert.test("F.object.deepProp");
+            assert('"yes"', 'Maybe("yes")' === F.object.deepProp(["push", "message"], { push: { message: "yes" } }).stringify());
+            assert("false", 'Maybe(false)' === F.object.deepProp(["push", "message"], { push: { message: false } }).stringify());
+            assert("passage", 'Maybe()' === F.object.deepProp(["push", "message"], { push: { passage: "yes" } }).stringify());
+            assert("mush", 'Maybe()' === F.object.deepProp(["push", "message"], { mush: {} }).stringify());
+            assert("{}", 'Maybe()' === F.object.deepProp(["push", "message"], { }).stringify());
+            assert("null", 'Maybe()' === F.object.deepProp(["push", "message"], null).stringify());
+            assert('12', 'Maybe(12)' === F.object.deepProp(["a"], { a: 12 }).stringify());
+            assert('12', 'Maybe(12)' === F.object.deepProp("a", { a: 12 }).stringify());
+
             assert.test("F.object.haz");
             assert("1", !F.object.haz("a", 1));
             assert("null", !F.object.haz("a", null));
@@ -13,12 +29,6 @@ package {
             assert("a:false", F.object.haz("a", { a: false }));
             assert("a:null", F.object.haz("a", { a: null }));
             assert("{}", !F.object.haz("a", { }));
-
-            assert.test("F.object.prop");
-            assert("a:true", F.object.prop("a", { a :true }).yes());
-            assert("a:false", F.object.prop("a", { a: false }).yes());
-            assert("a:null", F.object.prop("a", { a: null }).yes());
-            assert("{}", F.object.prop("a", {}).no());
 
             assert.test("F.object.deepHaz");
             assert('"yes"', F.object.deepHaz(["push", "message"], { push: { message: "yes" } }));
