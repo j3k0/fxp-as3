@@ -11,24 +11,17 @@ package fxp.utils {
                 return (!F.utils.isNativeType(data) && data && data[field] !== undefined);
             }),
 
-            // deepHaz :: Array[a] -> Object -> Boolean
+            // deepHaz :: Array[String] -> Object -> Boolean
             //
             // Examples:
-            // deepHaz("a.b.c", { a: { b: { c: "yes" } } }) -> true
-            // deepHaz("a.b.c", { a: { b: { c: false } } }) -> true
-            // deepHaz("a.b.c", { a: { b: {} } }) -> false
-            deepHaz: F.curry(function(def:String, data:Object):Boolean {
-
-                const headHaz:Function = F.curry(function(data:Object, arr:Array):Boolean {
-                    return F.array.headMap(F.object.haz, arr).map(F.rcall(data)).isTrue();
-                });
-                const joinTail:Function = F.combine(F.join, F.map(F.array.join(".")), F.array.tail);
-
-                const tokens:Maybe = F.string.split(".", def);
-                const child:Object = tokens.chain(F.array.head).chain(F.flip(F.object.prop)(data)).maybe(null, F.id);
-                return tokens.no() || (
-                    tokens.map(headHaz(data)).isTrue()
-                    && tokens.map(joinTail).map(F.flip(F.object.deepHaz)(child)).isTrue()
+            // deepHaz(["a", "b", "c"], { a: { b: { c: "yes" } } }) -> true
+            // deepHaz(["a", "b", "c"], { a: { b: { c: false } } }) -> true
+            // deepHaz(["a", "b", "c"], { a: { b: {} } }) -> false
+            deepHaz: F.curry(function(path:Array, data:Object):Boolean {
+                const child:Object = F.array.head(path).chain(F.flip(F.object.prop)(data)).maybe(null, F.id);
+                return (path.length === 0) || (
+                       F.array.head(path).map(F.object.haz).map(F.rcall(data)).isTrue()
+                    && F.array.tail(path).map(F.flip(F.object.deepHaz)(child)).isTrue()
                 );
             }),
 

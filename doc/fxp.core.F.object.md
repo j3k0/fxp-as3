@@ -6,11 +6,11 @@ Returns true iff Object has the property with name provided in the first argumen
 
 **Example**: `F.object.haz("hello", { hello: true }) === true`
 
-#### F.object.deepHaz :: String → Object → Boolean
+#### F.object.deepHaz :: Array(String) → Object → Boolean
 
 Returns true iff Object has the property with **path** provided in the first argument.
 
-**Example**: `F.object.deepHaz("a.b.c", { a: { b: { c: true } } }) === true`
+**Example**: `F.object.deepHaz(["a","b","c"], { a: { b: { c: true } } }) === true`
 
 #### F.object.prop :: String → Object → Maybe(a)
 

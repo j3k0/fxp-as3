@@ -21,13 +21,13 @@ package {
             assert("{}", F.object.prop("a", {}).no());
 
             assert.test("F.object.deepHaz");
-            assert('"yes"', F.object.deepHaz("push.message", { push: { message: "yes" } }));
-            assert("false", F.object.deepHaz("push.message", { push: { message: false } }));
-            assert("passage", !F.object.deepHaz("push.message", { push: { passage: "yes" } }));
-            assert("mush", !F.object.deepHaz("push.message", { mush: {} }));
-            assert("{}", !F.object.deepHaz("push.message", { }));
-            assert("null", !F.object.deepHaz("push.message", null));
-            assert('value', true === F.object.deepHaz("a", { a: 12 }));
+            assert('"yes"', F.object.deepHaz(["push", "message"], { push: { message: "yes" } }));
+            assert("false", F.object.deepHaz(["push", "message"], { push: { message: false } }));
+            assert("passage", !F.object.deepHaz(["push", "message"], { push: { passage: "yes" } }));
+            assert("mush", !F.object.deepHaz(["push", "message"], { mush: {} }));
+            assert("{}", !F.object.deepHaz(["push", "message"], { }));
+            assert("null", !F.object.deepHaz(["push", "message"], null));
+            assert('value', true === F.object.deepHaz(["a"], { a: 12 }));
         }
     }
 }
