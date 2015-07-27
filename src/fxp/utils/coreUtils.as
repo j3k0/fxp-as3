@@ -11,6 +11,11 @@ package fxp.utils {
                 return a === b;
             }),
 
+            // selector :: a -> a -> Boolean -> a
+            selector: F.curry(function(whenFalse:*, whenTrue:*, test:Boolean):* {
+                return test ? whenTrue : whenFalse;
+            }),
+
             // isNativeType :: a -> Boolean
             isNativeType: function(data:*):Boolean {
                 return typeof data == "number" ||
