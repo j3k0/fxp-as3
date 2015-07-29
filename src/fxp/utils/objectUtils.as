@@ -38,20 +38,6 @@ package fxp.utils {
                 return (!F.utils.isNativeType(data) && data && data[field] !== undefined);
             }),
 
-            // deepHazWithArray :: Array[String] -> Object -> Boolean
-            deepHazWithArray: F.curry(function(path:Array, data:Object):Boolean {
-                const child:Object = F.array.head(path).chain(F.flip(F.object.prop)(data)).maybe(null, F.id);
-                return (path.length === 0) || (
-                       F.array.head(path).map(F.object.haz).map(F.rcall(data)).isTrue()
-                    && F.array.tail(path).map(F.flip(F.object.deepHazWithArray)(child)).isTrue()
-                );
-            }),
-
-            // deepHazWithString :: String -> Object -> Boolean
-            deepHazWithString: F.curry(function(path:String, data:Object):Boolean {
-                return F.object.deepHazWithArray(path.split("."), data);
-            }),
-
             // deepHaz :: (Array[String] | String) -> Object -> Boolean
             //
             // Examples:
@@ -61,9 +47,12 @@ package fxp.utils {
             // deepHaz("a.b.c", { a: { b: { c: "yes" } } }) -> true
             deepHaz: F.curry(function(path:*, data:Object):Boolean {
                 return !F.object.deepProp(path, data).isNothing();
-                //return (typeof path === "string"
-                //    ? object.deepHazWithString
-                //    : object.deepHazWithArray)(path, data);
+            }),
+
+            // deepHazAll :: Array[(Array[String] | String)] -> Object -> Boolean
+            // TODO: test & document
+            deepHazAll: F.curry(function(paths:Array, data:Object):Boolean {
+                return paths.every(F.flip(F.object.deepHaz)(data));
             })
         }
         return object;
