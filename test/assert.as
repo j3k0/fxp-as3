@@ -1,13 +1,15 @@
 package {
-    public var assert:Function = function(what:String, result:Boolean):void {
+    public var assert:Function = function(what:String, result:Boolean):Boolean {
         if (result) {
             trace(test, what, " OK");
             ++success;
+            return true;
         }
         else {
             trace(test, what, " FAILED");
             ++failures;
             errors.push(new Error("Test failed: " + test + " " + what));
+            return false;
         }
     }
 
@@ -20,6 +22,19 @@ package {
     assert.test = function(testName:String):void {
         test = testName;
         trace("\n**", testName);
+    }
+
+    assert.equals = function(what:String, expect:*, got:*):Boolean {
+        if (!assert(what, expect === got)) {
+            trace("Expected: " + expect);
+            trace("     Got: " + got);
+            return false;
+        }
+        return true;
+    }
+
+    assert.ok = function(what:String, result:Boolean):Boolean {
+        return assert.equals(what, true, result);
     }
 }
 
