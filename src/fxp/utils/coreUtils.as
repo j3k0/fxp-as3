@@ -11,6 +11,24 @@ package fxp.utils {
                 return a === b;
             }),
 
+            // lowerThan :: a -> a -> Boolean
+            lowerThan: F.curry(function(a:*, b:*):Boolean {
+                return b < a;
+            }),
+            // lowerEqual :: a -> a -> Boolean
+            lowerEqual: F.curry(function(a:*, b:*):Boolean {
+                return b <= a;
+            }),
+
+            // greaterThan :: a -> a -> Boolean
+            greaterThan: F.curry(function(a:*, b:*):Boolean {
+                return b > a;
+            }),
+            // greaterEqual :: a -> a -> Boolean
+            greaterEqual: F.curry(function(a:*, b:*):Boolean {
+                return b >= a;
+            }),
+
             // selector :: a -> a -> Boolean -> a
             selector: F.curry(function(whenFalse:*, whenTrue:*, test:Boolean):* {
                 return test ? whenTrue : whenFalse;
