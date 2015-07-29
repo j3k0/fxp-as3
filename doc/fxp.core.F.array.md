@@ -1,5 +1,11 @@
 ### F.array
 
+#### F.array.of :: ...args → Array(a)
+
+Create an array from a dynamic list of arguments
+
+**Example**: `F.array.of(1,2,4,5) == [1,2,4,5]`
+
 #### F.array.join :: String → Array(a) → String
 
 Join an array into a single string using a separator.
