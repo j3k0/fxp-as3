@@ -94,7 +94,7 @@ package fxp.core {
                 return data;
             };
             // Keep the arity information (equals last function arity)
-            return functionWithArity(ret, func[func.length - 1].length);
+            return curry(functionWithArity(ret, func[func.length - 1].length));
         }
 
         public static const map:Function = curry(function(f:Function, m:*):* {
