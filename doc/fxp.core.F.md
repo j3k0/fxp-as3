@@ -96,6 +96,26 @@ Fliped call function.
 
 **Example**: `Maybe.of(add5).map(F.rcall(6)) == 'Maybe(11)'`
 
+#### F.liftM1 :: (a -> b) -> M(a) -> M(b)
+
+Convert a function (a -> b) to a function M(a) to M(b).
+
+**Example**:
+```
+maybeAdd5 = F.liftM1(add5)
+maybeAdd5(Maybe.of(1)) == 'Maybe(6)'
+```
+
+#### F.liftM2 :: (a -> b -> c) -> M(a) -> M(b) -> M(c)
+
+Convert a function (a -> b -> c) to a function M(a) -> M(b) -> M(b).
+
+**Example**:
+```
+maybeAdd = F.liftM1(add)
+maybeAdd(Maybe.of(1), Maybe.of(2)) == 'Maybe(3)'
+```
+
 ### Utilities
 
 The `F` class also provides access to utilities.

@@ -97,15 +97,20 @@ package fxp.core {
             return curry(functionWithArity(ret, func[func.length - 1].length));
         }
 
+        // (a -> b) -> M(a) -> M(b)
         public static const map:Function = curry(function(f:Function, m:*):* {
             return m.map(f);
         });
 
+        // M(M(a)) -> M(a)
         public static const join:Function = function(m:*):* { return m.join(); }
+
+        // (a -> M(b)) -> M(a) -> M(b)
         public static const chain:Function = curry(function(f:Function, m:*):* {
             return m.chain(f);
         });
 
+        // (a -> b) -> (b -> a)
         public static const flip:Function = function(f:Function):Function {
             return curry(function(a:*, b:*):* {
                 return f(b, a);
@@ -126,6 +131,7 @@ package fxp.core {
         public static const call:Function = call1;
         public static const rcall:Function = flip(call);
 
+        // TODO: test & document
         public static function once(f:Function):Function {
             var called:Boolean = false;
             var ret:*;
@@ -137,6 +143,16 @@ package fxp.core {
                 return ret;
             }, f.length);
         }
+
+        // (a -> b) -> M(a) -> M(b)
+        public static const liftM1:Function = curry(function(f:Function, m1:*):* {
+            return m1.map(f);
+        });
+
+        // (a -> b -> c) -> M(a) -> M(b) -> M(c)
+        public static const liftM2:Function = curry(function(f:Function, m1:*, m2:*):* {
+            return m1.map(curry(f)).chain(flip(map)(m2));
+        });
 
         // Core utils
         public static var utils:Object = null;
