@@ -119,7 +119,7 @@ package fxp.utils {
         // mapApplyEachArgs :: Array[a -> (b -> c), d -> M(b)] -> a -> d -> M(c)
         // TODO: test & document
         array.mapApplyEachArgs = F.curry(function(func:Array, a:*, b:*):* {
-            return array.mapApplyEach(func, [a, a]);
+            return array.mapApplyEach(func, [a, b]);
         });
 
         // has :: a -> Array[a] -> Boolean
