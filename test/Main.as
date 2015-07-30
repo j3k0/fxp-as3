@@ -17,6 +17,7 @@ package
                 TestMaybe.run();
                 TestFObject.run();
                 TestFArray.run();
+                TestIO.run();
                 assert.finish();
                 NativeApplication.nativeApplication.exit(0);
             }

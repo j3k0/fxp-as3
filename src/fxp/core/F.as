@@ -97,6 +97,9 @@ package fxp.core {
             return curry(functionWithArity(ret, func[func.length - 1].length));
         }
 
+        public static const compose:Function = combine;
+        public static const composeArray:Function = combineArray;
+
         // (a -> b) -> M(a) -> M(b)
         public static const map:Function = curry(function(f:Function, m:*):* {
             return m.map(f);
