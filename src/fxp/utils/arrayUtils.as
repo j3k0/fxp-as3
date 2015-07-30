@@ -105,9 +105,12 @@ package fxp.utils {
             return arr[1].map(arr[0]);
         };
 
-        // mapApplyArgs :: Array[a -> (b -> c), d -> M(b)] -> a -> d -> M(c)
+        // mapApplyEachArgs :: Array[a -> (b -> c), d -> M(b)] -> a -> d -> M(c)
         // TODO: test & document
-        array.mapApplyEachArgs = F.combine(array.mapApply, array.mapEachArgs);
+        array.mapApplyEachArgs = F.curry(function(func:Array, a:*, b:*):* {
+            var arr:Array = array.mapEachArgs(func)(a, b);
+            return array.mapApply(arr);
+        });
 
         // has :: a -> Array[a] -> Boolean
         // TODO: document
