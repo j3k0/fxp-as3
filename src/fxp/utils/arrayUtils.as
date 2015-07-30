@@ -82,7 +82,7 @@ package fxp.utils {
             return array.concat([], args);
         };
 
-        // mapEach :: Array[* -> *] -> Array[*] -> Array[*]
+        // mapEach :: Array[X -> Y] -> Array[X] -> Array[Y]
         // TODO: test & document
         array.mapEach = F.curry(function(func:Array, arr:*):Array {
             var ret:Array = [];
@@ -99,17 +99,27 @@ package fxp.utils {
             }, func.length);
         };
 
-        // mapApply :: Array[(a -> b), M(a)] -> a -> M(b)
+        // mapApply :: Array[(z -> y), ..., (b -> c), (a -> b), M(a)] -> M(z)
         // TODO: document
         array.mapApply = function(arr:Array):* {
-            return arr[1].map(arr[0]);
+            if (!arr || arr.length === 0)
+                return undefined;
+            else {
+                var base:* = arr[arr.length - 1];
+                for (var i:int = arr.length - 2; i >=0 ; --i)
+                    base = base.map(arr[i]);
+                return base;
+            }
         };
+
+        // mapApplyEach :: Array[a -> (b -> c), d -> M(b)] -> Array[a, d] -> M(c)
+        // TODO: test & document
+        array.mapApplyEach = F.combine(array.mapApply, array.mapEach);
 
         // mapApplyEachArgs :: Array[a -> (b -> c), d -> M(b)] -> a -> d -> M(c)
         // TODO: test & document
         array.mapApplyEachArgs = F.curry(function(func:Array, a:*, b:*):* {
-            var arr:Array = array.mapEachArgs(func)(a, b);
-            return array.mapApply(arr);
+            return array.mapApplyEach(func, [a, a]);
         });
 
         // has :: a -> Array[a] -> Boolean
