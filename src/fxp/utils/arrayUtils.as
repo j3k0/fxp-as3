@@ -82,6 +82,33 @@ package fxp.utils {
             return array.concat([], args);
         };
 
+        // TODO: test & document
+        array.foldL = F.curry(function(f:Function, arr:Array):* {
+            if (!arr || arr.length === 0) {
+                return undefined;
+            }
+            else {
+                var acc:* = arr[0];
+                for (var i:int = 1; i < arr.length; ++i)
+                    acc = f(acc, arr[i]);
+                return acc;
+            }
+        });
+
+        // foldR :: (a -> b -> c) -> Array(a, a, ..., a, a, b) -> c
+        // TODO: test & document
+        array.foldR = F.curry(function(f:Function, arr:Array):* {
+            if (!arr || arr.length === 0) {
+                return undefined;
+            }
+            else {
+                var acc:* = arr[arr.length - 1];
+                for (var i:int = arr.length - 2; i >=0 ; --i)
+                    acc = f(arr[i], acc);
+                return acc;
+            }
+        });
+
         // mapEach :: Array[X -> Y] -> Array[X] -> Array[Y]
         // TODO: test & document
         array.mapEach = F.curry(function(func:Array, arr:*):Array {
@@ -101,16 +128,7 @@ package fxp.utils {
 
         // mapApply :: Array[(z -> y), ..., (b -> c), (a -> b), M(a)] -> M(z)
         // TODO: document
-        array.mapApply = function(arr:Array):* {
-            if (!arr || arr.length === 0)
-                return undefined;
-            else {
-                var base:* = arr[arr.length - 1];
-                for (var i:int = arr.length - 2; i >=0 ; --i)
-                    base = base.map(arr[i]);
-                return base;
-            }
-        };
+        array.mapApply = array.foldR(F.map);
 
         // mapApplyEach :: Array[a -> (b -> c), d -> M(b)] -> Array[a, d] -> M(c)
         // TODO: test & document
