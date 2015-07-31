@@ -1,7 +1,7 @@
 ### Maybe Monad
 
 ```actionscript
-import fxp.monads.Maybe;
+    import fxp.monads.Maybe;
 ```
 
 #### new Maybe

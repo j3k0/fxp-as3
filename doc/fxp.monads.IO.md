@@ -1,20 +1,26 @@
 ### IO Monad
 
 ```actionscript
-import fxp.monads.IO;
+    import fxp.monads.IO;
 ```
 
 #### new IO :: f -> IO
 
 Enclose an unpure function into an IO, an act of great purification.
 
-**Example**: `var io:IO = new IO(function():* { return computer.shutdown(); });
+**Example**:
+```actionscript
+    var io:IO = new IO(function():* { return computer.shutdown(); });
+```
 
 #### IO.of :: Object -> IO
 
 Enclose an unpure mutable object into an IO, like in a pandora box.
 
-**Example**: `var io:IO = IO.of(SharedObject.getLocal("state"))`
+**Example**:
+```actionscript
+    var io:IO = IO.of(SharedObject.getLocal("state"));
+```
 
 #### IO.perform :: IO(a) -> * -> *
 
@@ -22,7 +28,10 @@ Run the unpure effect enclosed in the IO.
 
 You can pass any required arguments and use its return value.
 
-**Example**: `io.perform()`
+**Example**:
+```actionscript
+    io.perform()
+```
 
 #### IO.map :: IO(a) -> (a -> b) -> IO(b)
 

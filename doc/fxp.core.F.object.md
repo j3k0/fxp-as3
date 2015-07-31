@@ -1,5 +1,9 @@
 ### F.object
 
+```actionscript
+    import fxp.core.F;
+```
+
 #### F.object.prop :: String → Object → Maybe(a)
 
 Return the Object's property with name provided in the first argument.
