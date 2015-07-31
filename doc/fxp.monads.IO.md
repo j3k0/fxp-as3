@@ -1,6 +1,8 @@
-### IO
+### IO Monad
 
-var io:IO;
+```actionscript
+import fxp.monads.IO;
+```
 
 #### new IO :: f -> IO
 
