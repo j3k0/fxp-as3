@@ -40,6 +40,25 @@ package {
             assert.test("IO.join");
             assert.equals("2 IO gives 1 IO",
                 1, new IO(function():IO { return IO.of(1) }).join().perform());
+
+            assert.test("IO.utils.perform");
+            assert.equals("is the static alternative to perform an IO",
+                5, IO.utils.perform(new IO(function():* { return 5; })));
+
+            assert.test("IO.utils.performArray");
+            assert.equals("allows to run multiple IOs",
+                "[1,2,3]", F.debug.stringify(IO.utils.performArray([
+                    new IO(function():* { return 1; }),
+                    new IO(function():* { return 2; }),
+                    new IO(function():* { return 3; }),
+                ])));
+
+            assert.test("IO.utils.setProp");
+            var obj:Object = {};
+            io = IO.utils.setProp("a", 9, obj);
+            assert.equals("keep object unmutated before perform", undefined, obj.a);
+            io.perform();
+            assert.equals("mutate when performed", 9, obj.a);
         }
     }
 }

@@ -1,6 +1,7 @@
 package fxp.core {
 
-    import fxp.monads.*;
+    import fxp.monads.Maybe;
+    import fxp.monads.IO;
     import fxp.utils.*;
 
     public class F {
@@ -55,8 +56,9 @@ package fxp.core {
         }
 
         // Return a curried function
-        public static const curry:Function = function(func:Function):Function {
-            var arity:int = func.length;
+        public static const curry:Function = function(func:Function, arity:int = -1):Function {
+            if (arity < 0) arity = func.length;
+            // var arity:int = func.length;
             var currying:Function = function(func:Function, arity:int, args:Array):* {
                 return function(... moreArgs:Array):* {
                     var newArgs:Array = args.concat(moreArgs);
@@ -156,6 +158,25 @@ package fxp.core {
         public static const liftM2:Function = curry(function(f:Function, m1:*, m2:*):* {
             return m1.map(curry(f)).chain(flip(map)(m2));
         });
+
+        // TODO: test & document
+        public static function parallel(funcs:Array):Function {
+            var arity:int = funcs.length > 0 ? funcs[0].length : 0;
+            return functionWithArity(function(...args):* {
+                return funcs.map(function(f:Function):* {
+                    return f.apply(this, args);
+                });
+            }, arity);
+        }
+
+        // TODO: document
+        public static function IO(f:Function):Function {
+            return curry(function(...args):fxp.monads.IO {
+                return new fxp.monads.IO(function():* {
+                    return f.apply(this, args);
+                });
+            }, f.length);
+        }
 
         // Core utils
         public static var utils:Object = null;

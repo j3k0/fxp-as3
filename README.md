@@ -15,7 +15,7 @@ Please use [github](https://github.com/j3k0/fxp-as3) for issues and pull request
 
 ## API Documentation
 
-**Important notice**: all functions provided by the API are "curryfied". If you don't know what that means, please read the [mostly adequate guide](https://github.com/DrBoolean/mostly-adequate-guide) before going any further.
+**Important notice**: all functions provided by the API are "curried". If you don't know what that means, please read the [mostly adequate guide](https://github.com/DrBoolean/mostly-adequate-guide) before going any further.
 
  * [fxp.core.F](doc/fxp.core.F.md)
    * [core](doc/fxp.core.F.md)

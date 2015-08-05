@@ -23,6 +23,12 @@ package {
                 "Maybe()", F.liftM2(add)(Maybe.of(), Maybe.of(2)).stringify());
             assert.equals("keeps right monad properties",
                 "Maybe()", F.liftM2(add)(Maybe.of(2), Maybe.of()).stringify());
+
+            assert.test("F.IO");
+            assert.equals("is a shortcut for an IO function",
+                11, F.IO(function(a:int, b:int):* { return a + b; })(5,6).perform());
+            assert.equals("is curried",
+                11, F.IO(function(a:int, b:int):* { return a + b; })(5)(6).perform());
         }
     }
 }

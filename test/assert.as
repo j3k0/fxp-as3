@@ -26,8 +26,8 @@ package {
 
     assert.equals = function(what:String, expect:*, got:*):Boolean {
         if (!assert(what, expect === got)) {
-            trace("Expected: " + expect);
-            trace("     Got: " + got);
+            trace("Expected: " + JSON.stringify(expect));
+            trace("     Got: " + JSON.stringify(got));
             return false;
         }
         return true;
