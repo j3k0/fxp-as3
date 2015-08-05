@@ -18,6 +18,7 @@ package
                 TestFObject.run();
                 TestFArray.run();
                 TestIO.run();
+                TestReader.run();
                 assert.finish();
                 NativeApplication.nativeApplication.exit(0);
             }

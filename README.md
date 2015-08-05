@@ -26,6 +26,7 @@ Please use [github](https://github.com/j3k0/fxp-as3) for issues and pull request
    * [string](doc/fxp.core.F.string.md)
  * [fxp.monads.Maybe](doc/fxp.monads.Maybe.md)
  * [fxp.monads.IO](doc/fxp.monads.IO.md)
+ * [fxp.monads.Reader](doc/fxp.monads.Reader.md)
 
 # License
 
