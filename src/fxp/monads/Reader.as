@@ -69,7 +69,7 @@ package fxp.monads {
 
         // TODO: test & document
         public function stringify():String {
-            return "Reader(" + (typeof f) + ")";
+            return "Reader(" + typeof(f) + ")";
         }
     }
 }

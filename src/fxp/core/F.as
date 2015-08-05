@@ -1,5 +1,6 @@
 package fxp.core {
 
+    import fxp.monads.Reader;
     import fxp.monads.Maybe;
     import fxp.monads.IO;
     import fxp.utils.*;
@@ -176,6 +177,14 @@ package fxp.core {
                     return f.apply(this, args);
                 });
             }, f.length);
+        }
+
+        public static function Reader(fn:Function):Function {
+            return F.functionWithArity(function(...args):fxp.monads.Reader {
+                return new fxp.monads.Reader(function(config:*):* {
+                    return fn.apply(this, args.concat(config));
+                });
+            }, fn.length - 1);
         }
 
         // Core utils
