@@ -5,6 +5,8 @@ package fxp.core {
     import fxp.monads.IO;
     import fxp.utils.*;
 
+    import flash.utils.getQualifiedClassName;
+
     public class F {
 
         // Initialize the fxp library
@@ -185,6 +187,23 @@ package fxp.core {
                     return fn.apply(this, args.concat(config));
                 });
             }, fn.length - 1);
+        }
+
+        // TODO: test & document
+        public static function fromJSON(argsDef:Object, T:Class):Function {
+            return function(args:Object):* {
+                var ret:* = new T();
+                for (var k:String in argsDef) {
+                    if (argsDef[k] === Function) {
+                        if (typeof args[k] !== 'function')
+                            throw new Error("Wrong type for '" + k + "'. Expected:'function' Got:'" + typeof(args[k]) + "'");
+                    }
+                    else if (getQualifiedClassName(args[k]) !== getQualifiedClassName(argsDef[k]))
+                        throw new Error("Wrong type for '" + k + "'. Expected:'" + getQualifiedClassName(argsDef[k]) + "' Got:'" + getQualifiedClassName(args[k]) + "'");
+                    ret[k] = args[k];
+                }
+                return ret;
+            }
         }
 
         // Core utils
