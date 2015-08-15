@@ -82,6 +82,19 @@ package fxp.utils {
             return array.concat([], args);
         };
 
+        // reduce :: (T, U -> T) -> T -> Array[U] -> T
+        array.reduce = F.curry(function(f:Function, initial:*, arr:Array):* {
+            if (!arr || arr.length === 0) {
+                return initial;
+            }
+            else {
+                var acc:* = initial;
+                for (var i:int = 0; i < arr.length; ++i)
+                    acc = f(acc, arr[i]);
+                return acc;
+            }
+        });
+
         // TODO: test & document
         array.foldL = F.curry(function(f:Function, arr:Array):* {
             if (!arr || arr.length === 0) {
