@@ -207,6 +207,64 @@ package fxp.core {
             }
         }
 
+        // Returns a function with a dynamic number of arguments
+        // that is gonna call `fn` with the right number of args,
+        // dicarding any extraneous ones.
+        public static function ignoreArity(fn:Function):Function {
+            return function(...args):* {
+                return fn.apply(this, args.slice(0, fn.length));
+            };
+        }
+
+        // Return a function that will behave externally exactly like f,
+        // It will call and return the value of f().
+        //
+        // But transparently call also the attached functions with the
+        // same arguments.
+        //
+        // note: attached functions can have less arguments than the
+        // master function. Extra args will be ignored.
+        //
+        // ...(...args -> T) -> ...args -> T
+        public static function attach(f:Function, ...thenAlso):Function {
+            return F.curry(functionWithArity(function(...args):* {
+                var ret:* = f.apply(null, args);
+                thenAlso.forEach(function(fb:Function, ...ignored):void {
+                    fb.apply(this, args.slice(0, fb.length));
+                });
+                return ret;
+            }, f.length));
+        }
+
+        // Return a function that returns a monad that shows the same
+        // properties as f's returned monad.
+        //
+        // But transparently it'll chain extra functions, called with the
+        // same arguments.
+        //
+        // Attached functions can have less arguments than the
+        // master function. Extra args will be ignored.
+        //
+        // ...(...args -> M<T>) -> ...args -> M<T>
+        public static function attachChain(f:Function, ...thenAlso):Function {
+            return F.curry(functionWithArity(function(...args):* {
+                var ret:* = null;
+                var monad:* = f.apply(null, args);
+                monad = monad.map(function(v:*):* {
+                    return ret = v;
+                });
+                thenAlso.forEach(function(fb:Function, ...ignored):void {
+                    monad = monad.chain(function(v:*):* {
+                        return fb.apply(this, args.slice(0, fb.length));
+                    });
+                });
+                monad = monad.map(function(v:*):* {
+                    return ret;
+                });
+                return monad;
+            }, f.length));
+        }
+
         // Core utils
         public static var utils:Object = null;
 
