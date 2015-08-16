@@ -57,6 +57,7 @@ package fxp.core {
             // Keep the arity of the partial function
             return functionWithArity(ret, func.length - boundArgs.length);
         }
+        public static const bind:Function = partial;
 
         // Return a curried function
         public static const curry:Function = function(func:Function, arity:int = -1):Function {
