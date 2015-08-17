@@ -190,6 +190,11 @@ package fxp.core {
             }, fn.length - 1);
         }
 
+        public static function renameType(t:String):String {
+            if (t == "int") return "Number";
+            else return t;
+        }
+
         // TODO: test & document
         public static function fromJSON(argsDef:Object, T:Class):Function {
             return function(args:Object):* {
@@ -199,7 +204,7 @@ package fxp.core {
                         if (typeof args[k] !== 'function')
                             throw new Error("Wrong type for '" + k + "'. Expected:'function' Got:'" + typeof(args[k]) + "'");
                     }
-                    else if (getQualifiedClassName(args[k]) !== getQualifiedClassName(argsDef[k]))
+                    else if (renameType(getQualifiedClassName(args[k])) !== renameType(getQualifiedClassName(argsDef[k])))
                         throw new Error("Wrong type for '" + k + "'. Expected:'" + getQualifiedClassName(argsDef[k]) + "' Got:'" + getQualifiedClassName(args[k]) + "'");
                     ret[k] = args[k];
                 }
