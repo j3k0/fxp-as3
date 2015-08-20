@@ -270,6 +270,17 @@ package fxp.core {
             }, f.length));
         }
 
+        // (...args -> M<T>) -> (T -> M<U>) -> ... -> (Y -> M<Z>) -> (...args -> M<Z>)
+        public static function doChain(f:Function, ...thenAlso):Function {
+            return functionWithArity(function(...args):* {
+                var m:* = f.apply(this, args);
+                thenAlso.forEach(function(fb:Function, ...ignored):void {
+                    m = m.chain(fb);
+                });
+                return m;
+            }, f.length);
+        }
+
         // Core utils
         public static var utils:Object = null;
 
