@@ -119,7 +119,7 @@ package fxp.core {
             return m.chain(f);
         });
 
-        // (a -> b) -> (b -> a)
+        // (a -> b -> c) -> (b -> a -> c)
         public static const flip:Function = function(f:Function):Function {
             return curry(function(a:*, b:*):* {
                 return f(b, a);
