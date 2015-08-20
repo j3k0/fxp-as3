@@ -15,6 +15,10 @@ package fxp.monads {
             return new IO(function():* { return v; });
         }
 
+        public static function ofIOArray(ioArray:Array):IO {
+            return new IO(function():* { return utils.performArray(ioArray); });
+        }
+
         public function map(f:Function):* {
             return new IO(function():* { return f(perform()); });
         }
