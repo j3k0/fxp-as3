@@ -18,73 +18,86 @@ Please use [github](https://github.com/j3k0/fxp-as3) for issues and pull request
 A short example of what this lib allows (yeah unpure), just gives a hint of what kind of abstractions you'll get.
 
 ```actionscript
-    // DisplayObjectContainer -> DisplayObject -> DisplayObject
-    public static var addChild:Function = F.curry(function(parent:DisplayObjectContainer, child:DisplayObject):DisplayObject {
-        parent.addChild(child);
-        return child;
-    });
+// DisplayObjectContainer -> DisplayObject -> DisplayObject
+public static var addChild:Function = F.curry(function(parent:DisplayObjectContainer, child:DisplayObject):DisplayObject {
+    parent.addChild(child);
+    return child;
+});
 
-    // DisplayObjectContainer -> Array<DisplayObject> -> Array<DisplayObject>
-    public static var addChilds:Function = F.curry(function(parent:DisplayObjectContainer, children:Array):Array {
-        return F.array.map(addChild(parent), children);
-    });
+// DisplayObjectContainer -> Array<DisplayObject> -> Array<DisplayObject>
+public static var addChilds:Function = F.curry(function(parent:DisplayObjectContainer, children:Array):Array {
+    return F.array.map(addChild(parent), children);
+});
 
-    // Boolean -> DisplayObject -> DisplayObject
-    public static var setVisible:Function = F.curry(function(value:Boolean, object:DisplayObject):DisplayObject {
-        object.visible = value;
-        return object;
-    });
+// Boolean -> DisplayObject -> DisplayObject
+public static var setVisible:Function = F.curry(function(value:Boolean, object:DisplayObject):DisplayObject {
+    object.visible = value;
+    return object;
+});
 
-    // DisplayObjectContainer -> DisplayObject -> DisplayObject
-    public static var addInvisibleChild:Function = F.compose(setVisible(false), addChild);
+// DisplayObjectContainer -> DisplayObject -> DisplayObject
+public static var addInvisibleChild:Function = F.compose(setVisible(false), addChild);
 
-    // DisplayObjectContainer -> Array<DisplayObject>
-    public static var buildObjectInto:Function = function(root:DisplayObjectContainer):Array {
-        return addChilds(root, [
-            new Button("Button 1"),
-            new Button("Button 2")
-        ]);
-        .concat(addInvisibleChild(root, new Button("My Hidden Button")));
-    }
+// DisplayObjectContainer -> Array<DisplayObject>
+public static var buildObjectInto:Function = function(root:DisplayObjectContainer):Array {
+    return addChilds(root, [
+        new Button("Button 1"),
+        new Button("Button 2")
+    ]);
+    .concat(addInvisibleChild(root, new Button("My Hidden Button")));
+}
 ```
 
 For the purists, same thing with `IO` (see fxp.monads.IO)
 
 ```actionscript
-    // DisplayObjectContainer -> DisplayObject -> IO<DisplayObject>
-    public static var addChild:Function = F.IO(function(parent:DisplayObjectContainer, child:DisplayObject):DisplayObject {
-        parent.addChild(child);
-        return child;
-    });
+// DisplayObjectContainer -> DisplayObject -> IO<DisplayObject>
+public static var addChild:Function = F.IO(function(parent:DisplayObjectContainer, child:DisplayObject):DisplayObject {
+    parent.addChild(child);
+    return child;
+});
 
-    // DisplayObjectContainer -> Array<DisplayObject> -> Array<IO<DisplayObject>>
-    public static var addChilds:Function = F.IO(function(parent:DisplayObjectContainer, children:Array):Array {
-        return F.array.map(addChild(parent), children);
-    });
+// DisplayObjectContainer -> Array<DisplayObject> -> Array<IO<DisplayObject>>
+public static var addChilds:Function = F.IO(function(parent:DisplayObjectContainer, children:Array):Array {
+    return F.array.map(addChild(parent), children);
+});
 
-    // Boolean -> DisplayObject -> DisplayObject
-    public static var setVisible:Function = F.curry(function(value:Boolean, object:DisplayObject):DisplayObject {
-        object.visible = value;
-        return object;
-    });
+// Boolean -> DisplayObject -> DisplayObject
+public static var setVisible:Function = F.curry(function(value:Boolean, object:DisplayObject):DisplayObject {
+    object.visible = value;
+    return object;
+});
 
-    // DisplayObjectContainer -> DisplayObject -> IO<DisplayObject>
-    public static var addInvisibleChild:Function = F.compose(F.map(setVisible(false)), addChild);
+// DisplayObjectContainer -> DisplayObject -> IO<DisplayObject>
+public static var addInvisibleChild:Function = F.compose(F.map(setVisible(false)), addChild);
 
-    // DisplayObjectContainer -> Array<IO>
-    public static var buildObjectInto:Function = function(root:DisplayObjectContainer):Array {
-        return addChilds(root, [
-            new Button("Button 1"),
-            new Button("Button 2")
-        ])
-        .concat(addInvisibleChild(root, new Button("My Hidden Button")));
-    }
+// DisplayObjectContainer -> Array<IO>
+public static var buildObjectInto:Function = function(root:DisplayObjectContainer):Array {
+    return addChilds(root, [
+        new Button("Button 1"),
+        new Button("Button 2")
+    ])
+    .concat(addInvisibleChild(root, new Button("My Hidden Button")));
+}
 
-    // Our only unpure effect-land function
-    public static function unsafeBuildObjectInto(root:DisplayObjectContainer):void {
-        IO.utils.performArray(buildObjectInto(root));
-    }
+// Our only unpure effect-land function
+public static function unsafeBuildObjectInto(root:DisplayObjectContainer):void {
+    IO.utils.performArray(buildObjectInto(root));
+}
 ```
+
+What happened here? `F.IO()` takes an unpure function as argument and turns it into a function that returns an IO monad instance. All but `unsafeBuildObjectInto` are now pure function, guaranteed to be free of side-effects!
+
+## Getting started
+
+The simplest way to include Fxp into your project is to copy the files somewhere the compiler will find it.
+
+    cd /some/path
+    git clone https://github.com/j3k0/fxp-as3.git
+
+Add `/some/path/fxp-as3/src` into the "source-path" of your project.
+
+Why no .swc? Because.
 
 ## API Documentation
 
