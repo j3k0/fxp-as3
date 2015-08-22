@@ -159,6 +159,14 @@ package fxp.utils {
             return array.some(F.utils.equals(value), arr);
         });
 
+        // toArray :: Iterable<T> -> Array<T>
+        // TODO: test & document
+        array.ofIterable = function(iterable:*):Array {
+            var ret:Array = [];
+            for each (var elem:* in iterable) ret.push(elem);
+            return ret;
+        }
+
         return array;
     }
 }
