@@ -63,23 +63,25 @@ package fxp.core {
         public static const curry:Function = function(func:Function, arity:int = -1):Function {
             if (arity < 0) arity = func.length;
             // var arity:int = func.length;
-            var currying:Function = function(func:Function, arity:int, args:Array):* {
-                return function(... moreArgs:Array):* {
+            var currying:Function = function(func:Function, arity:int, args:Array):Function {
+                return (functionWithArity(function(... moreArgs:Array):* {
                     var newArgs:Array = args.concat(moreArgs);
                     var ret:* = undefined;
-                    if (newArgs.length < arity) {
-                        ret = functionWithArity(currying(func, arity, newArgs),
-                                                arity - newArgs.length);
+                    if (moreArgs.length < arity) {
+                        ret = currying(func, arity - moreArgs.length, newArgs);
                     }
                     else {
-                        if (arity > 0)
-                            newArgs = newArgs.slice(0, arity)
+                        // if (arity > 0)
+                        // newArgs = newArgs.slice(0, arity)
                         ret = func.apply(this, newArgs);
                     }
                     return ret;
-                }
+                }, arity));
             }
-            return functionWithArity(currying(func, arity, []), arity);
+            if (arity == 0)
+                return func;
+            else
+                return currying(func, arity, []);
         }
 
         // Combine multiple function together
