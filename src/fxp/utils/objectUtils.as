@@ -53,7 +53,27 @@ package fxp.utils {
             // TODO: test & document
             deepHazAll: F.curry(function(paths:Array, data:Object):Boolean {
                 return paths.every(F.flip(F.object.deepHaz)(data));
-            })
+            }),
+
+            // keys :: Object -> Array<String>
+            // TODO: test & document
+            keys: function(data:Object):Array {
+                var ret:Array = [];
+                for (var k:String in data)
+                    if (data.hasOwnProperty(k))
+                        ret.push(k);
+                return ret;
+            },
+
+            // values :: Object -> Array
+            // TODO: test & document
+            values: function(data:Object):Array {
+                var ret:Array = [];
+                for (var k:String in data)
+                    if (data.hasOwnProperty(k))
+                        ret.push(data[k]);
+                return ret;
+            }
         }
         return object;
     }
