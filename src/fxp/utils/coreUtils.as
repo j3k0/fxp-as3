@@ -34,6 +34,20 @@ package fxp.utils {
                 return test ? whenTrue : whenFalse;
             }),
 
+            // both :: (...args -> Boolean) -> (...args -> Boolean) -> ...args -> Boolean
+            both: F.curry(function(f:Function, g:Function):Function {
+                return F.functionWithArity(function(...args):Boolean {
+                    return f.apply(this, args) && g.apply(this, args);
+                }, f.length);
+            }),
+
+            // either :: (...args -> Boolean) -> (...args -> Boolean) -> ...args -> Boolean
+            either: F.curry(function(f:Function, g:Function):Function {
+                return F.functionWithArity(function(...args):Boolean {
+                    return f.apply(this, args) || g.apply(this, args);
+                }, f.length);
+            }),
+
             // isNativeType :: a -> Boolean
             isNativeType: function(data:*):Boolean {
                 return typeof data == "number" ||
