@@ -7,6 +7,14 @@ package fxp.utils {
 
         var array:Object = {};
 
+        // ofVector :: Iterable[a] -> Array[a]
+        array.ofVector = function(v:*):Array {
+            var arr:Array = [];
+            for each (var e:* in v)
+                arr[arr.length] = e;
+            return arr;
+        };
+
         // map :: (a -> b) -> Array[a] -> Array[b]
         // TODO: test & document
         array.map = F.curry(function(f:Function, arr:Array):Array {
