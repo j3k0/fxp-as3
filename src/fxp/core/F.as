@@ -37,10 +37,10 @@ package fxp.core {
                 case 3: return function a3(a:*,b:*,c:*):* { return f.apply(this, arguments); };
                 case 4: return function a4(a:*,b:*,c:*,d:*):* { return f.apply(this, arguments); };
                 case 5: return function a5(a:*,b:*,c:*,d:*,e:*):* { return f.apply(this, arguments); };
-                case 6: return function a6(a:*,b:*,c:*,d:*,e:*,f:*):* { return f.apply(this, arguments); };
-                case 7: return function a7(a:*,b:*,c:*,d:*,e:*,f:*,g:*):* { return f.apply(this, arguments); };
-                case 8: return function a8(a:*,b:*,c:*,d:*,e:*,f:*,g:*,h:*):* { return f.apply(this, arguments); };
-                case 9: return function a9(a:*,b:*,c:*,d:*,e:*,f:*,g:*,h:*,i:*):* { return f.apply(this, arguments); };
+                case 6: return function a6(a:*,b:*,c:*,d:*,e:*,pf:*):* { return f.apply(this, arguments); };
+                case 7: return function a7(a:*,b:*,c:*,d:*,e:*,pf:*,g:*):* { return f.apply(this, arguments); };
+                case 8: return function a8(a:*,b:*,c:*,d:*,e:*,pf:*,g:*,h:*):* { return f.apply(this, arguments); };
+                case 9: return function a9(a:*,b:*,c:*,d:*,e:*,pf:*,g:*,h:*,i:*):* { return f.apply(this, arguments); };
             }
             return function a0(...args):* { return f.apply(this, args); };
         }
