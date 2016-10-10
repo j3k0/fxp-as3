@@ -191,6 +191,15 @@ package fxp.utils {
                 func(i);
         });
 
+        // equals :: Array<T> -> Array<T> -> Boolean
+        // TODO: test & document
+        array.equals = F.curry(function(a:Array, b:Array):Boolean {
+            const sameAsA:Function = function(value:*, index:int, _:Array):Boolean {
+                return value == a[index];
+            };
+            return (b.length == a.length) && b.every(sameAsA);
+        });
+
         return array;
     }
 }
