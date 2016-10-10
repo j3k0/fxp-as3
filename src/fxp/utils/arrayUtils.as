@@ -132,7 +132,7 @@ package fxp.utils {
 
         // mapEach :: Array[X -> Y] -> Array[X] -> Array[Y]
         // TODO: test & document
-        array.mapEach = F.curry(function(func:Array, arr:*):Array {
+        array.mapEach = F.curry(function(func:Array, arr:Array):Array {
             var ret:Array = [];
             for (var i:int = 0, l:int = func.length; i < l; ++i)
                 ret.push(func[i](arr[i]));
@@ -186,9 +186,17 @@ package fxp.utils {
 
         // forRange :: Int -> (Int -> _) -> _
         // TODO: test & document
-        array.forRange = F.curry(function(max:int, func:Function):Array {
+        array.forRange = F.curry(function(max:int, func:Function):void {
             for (var i:int = 0; i < max; ++i)
                 func(i);
+        });
+
+        // forRange :: Int -> (Int -> _) -> _
+        // TODO: test & document
+        array.forEach = F.curry(function(func:Function, arr:Array):Array {
+            for (var i:int = 0; i < arr.length; ++i)
+                func(arr[i]);
+            return arr;
         });
 
         // equals :: Array<T> -> Array<T> -> Boolean
