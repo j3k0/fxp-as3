@@ -175,6 +175,22 @@ package fxp.utils {
             return ret;
         }
 
+        // mapRange :: Int -> (Int -> T) -> Array<T>
+        // TODO: test & document
+        array.mapRange = F.curry(function(max:int, func:Function):Array {
+            var ret:Array = [];
+            for (var i:int = 0; i < max; ++i)
+                ret.push(func(i));
+            return ret;
+        });
+
+        // forRange :: Int -> (Int -> _) -> _
+        // TODO: test & document
+        array.forRange = F.curry(function(max:int, func:Function):Array {
+            for (var i:int = 0; i < max; ++i)
+                func(i);
+        });
+
         return array;
     }
 }
